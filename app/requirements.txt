@@ -1,0 +1,25 @@
+# ohpipe-mini-windows — Kern-Abhängigkeiten (fixiert, Windows x64 CPU zuerst)
+# Aufloesung: app/requirements.lock (100 hash-gepruefte Wheels, win_amd64/CP312,
+# per pip-download erzeugt am 2026-10-13). Installation im Setup:
+#   pip install --require-hashes -r app/requirements.lock
+# Hinweise:
+# - torch/torchaudio kommen vom PyTorch-CPU-Index (keine CUDA-Voraussetzung);
+#   torchaudio==2.3.1 passend zu torch==2.3.1 (Resolver waehlte sonst 2.11).
+# - pyannote-metrics==3.2.1, weil >=4.0 numpy>=2.2.2 verlangt und damit den
+#   numpy==1.26.4-Pin bricht (torch 2.3.1 ist gegen numpy 1.x gebaut).
+# - docopt==0.6.2 liegt als Wheel in vendor/wheels bei (reines Python; PyPI
+#   liefert dafuer kein Wheel, nur ein Quellpaket).
+# - av==15.1.0: av>=19 hat die von faster-whisper 1.1.0 genutzte
+#   av.open-Schnittstelle entfernt (mit echter ASR nachgewiesen).
+# - huggingface-hub==0.34.4: hub>=1.0 hat use_auth_token entfernt, das
+#   pyannote.audio 3.3.2 beim Modellladen uebergibt (nachgewiesen).
+faster-whisper==1.1.0
+pyannote.audio==3.3.2
+torch==2.3.1
+torchaudio==2.3.1
+numpy==1.26.4
+pyannote-metrics==3.2.1
+docopt==0.6.2
+pytest==8.3.4
+av==15.1.0
+huggingface-hub==0.34.4

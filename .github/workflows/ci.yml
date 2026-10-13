@@ -1,0 +1,64 @@
+name: Windows-Prüfung (Programmlogik, ohne Modelle)
+
+# Allgemeine CI auf Windows: ausführbare Programmlogik, Adaptertests,
+# Paketprüfung. KEINE vollständige Abnahme auf Windows 11 Home 24H2 und
+# kein Ersatz für reale Modelltests (siehe Auftragsdocs/TESTBERICHT.md).
+on:
+  push:
+  pull_request:
+
+jobs:
+  logik:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Testvoraussetzungen einrichten (Hash-Lock, wie im Setup)
+        run: python -m pip install --require-hashes -r app/requirements.lock
+      - name: Python-Prüfungen (ohne Modelle, ohne Netz)
+        run: python -m pytest tests/ -q
+      - name: Paketstruktur prüfen
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = "Stop"
+          foreach ($f in @("app/ohpipe.py","app/diar_adapter.py","app/diar2_merge.py",
+                           "app/models.json","app/requirements.lock","bin/oh-kette.cmd",
+                           "scripts/Install.ps1","scripts/common.ps1",
+                           "scripts/Setup-Modelle.py","tests/data/sprachclip.wav",
+                           "START-HIER.txt","README.md","LICENSE")) {
+            if (!(Test-Path $f)) { throw "fehlt: $f" }
+          }
+          $lock = (Select-String -Path app/requirements.lock -Pattern "^    --hash").Count
+          Write-Host "Lock-Einträge: $lock"
+          if ($lock -lt 90) { throw "Lock unvollständig ($lock Einträge)" }
+      - name: PowerShell-Skripte parsen (alle .ps1)
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = "Stop"
+          $dateien = Get-ChildItem -Recurse -Include *.ps1 scripts,bin
+          if ($dateien.Count -eq 0) { throw "keine .ps1 gefunden" }
+          foreach ($f in $dateien) {
+            $fehler = $null
+            [void][System.Management.Automation.PSParser]::Tokenize(
+              (Get-Content $f.FullName -Raw), [ref]$fehler)
+            if ($fehler.Count -gt 0) { throw "Syntaxfehler in $($f.FullName)" }
+          }
+          # Gefährliches Muster: $Variable: in expandierbaren Strings
+          # (Doppelpunkt als Scope). Erlaubt bleibt $env: (Bereich).
+          $funde = Select-String -Path scripts/*.ps1,bin/*.ps1 `
+            -Pattern '"[^"]*\$(?!env:)[A-Za-z_][A-Za-z0-9_]*:' -AllMatches
+          if ($funde) { $funde | ForEach-Object { Write-Host $_ }; throw "nicht abgegrenzte Variable vor Doppelpunkt" }
+          Write-Host "Parser ok ($($dateien.Count) Dateien)."
+      - name: Startskripte (.cmd) prüfen
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = "Stop"
+          foreach ($f in Get-ChildItem bin/*.cmd) {
+            $inhalt = Get-Content $f.FullName -Raw
+            if ($inhalt -notmatch "runtime\\python\\python\.exe") {
+              throw "$($f.Name) ruft nicht das private Python auf"
+            }
+          }
+          Write-Host ".cmd ok."

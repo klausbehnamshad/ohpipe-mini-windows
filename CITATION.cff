@@ -1,0 +1,33 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it using the metadata from this file."
+type: software
+title: ohpipe-mini-windows
+abstract: >-
+  ohpipe-mini-windows erstellt auf dem eigenen Windows-Rechner einen
+  Transkriptentwurf mit Zeitmarken und Sprecherkennungen aus Audio- und
+  Videoaufnahmen (Interviews, Oral History). Die Verarbeitung läuft lokal;
+  eine Hörliste führt zu den Stellen, die ein Mensch prüfen sollte.
+authors:
+  - given-names: Klaus
+    family-names: Behnam Shad
+    orcid: "https://orcid.org/0000-0002-3601-9024"
+license: Apache-2.0
+version: 0.3.2
+date-released: "2026-10-13"
+keywords:
+  - oral history
+  - speaker diarization
+  - transcription
+  - digital humanities
+  - interviews
+# repository-code wird nach der tatsächlichen Repositoryerstellung unter dem
+# Konto des Auftraggebers eingetragen (kein Platzhalter-Link).
+preferred-citation:
+  type: software
+  title: "diar2"
+  authors:
+    - given-names: Klaus
+      family-names: Behnam Shad
+      orcid: "https://orcid.org/0000-0002-3601-9024"
+  version: 4ea28ce9736a4de56584c325533c653b1b8e4951
+  notes: "Fachliche Grundlage der Wortzuordnung (diar2_merge.py, unverändert übernommen)."

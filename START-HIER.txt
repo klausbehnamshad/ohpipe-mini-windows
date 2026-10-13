@@ -1,0 +1,27 @@
+ohpipe-mini Windows — START HIER (3 Schritte bis zum ersten Transkript)
+
+Stand 0.3.0 (Vorabversion: Windows-Abnahme steht aus).
+
+1) Paket vom Projektbetreuer erhalten und entpacken (z. B. nach C:\ohpipe-mini-windows).
+2) Einrichten (einmalig, lädt Laufzeit, Pakete, Decoder und Modelle geprüft nach):
+     powershell -NoProfile -ExecutionPolicy Bypass -File scripts\Install.ps1
+   Für die Sprechertrennung zeigt das Setup vorher die Modellbedingungen;
+   der Erfolg kommt erst nach echter kurzer Verarbeitung.
+   Neues PowerShell-Fenster öffnen, Selbsttest:
+     tests\smoke.cmd
+3) Verarbeiten (ein Befehl):
+     oh-kette "C:\Users\Name\Downloads\Interview.mp4"
+   Oder mit vollem Pfad ohne PATH:
+     C:\ohpipe-mini-windows\bin\oh-kette.cmd "C:\Users\Name\Downloads\Interview.mp4"
+
+Weitere Beispiele:
+  oh-kette "C:\Aufnahmen\Interview.mp4" --sprache de --sprecher 2
+  oh-kette "C:\Aufnahmen\Interview.mp4" --profil klein
+  oh-kette "C:\Aufnahmen\Interview.mp4" --nur-transkript
+  oh-kette "C:\Aufnahmen\Interview.mp4" --voll
+Ergebnisse: %USERPROFILE%\Downloads\ohpipe-mini\diar2\output\NAME\
+(NAME.txt, NAME.srt, NAME.json, NAME.rttm, NAME.hoerliste.txt, NAME.run.json)
+Hörkontrolle: oh-hoer NAME  —  oh-hoer NAME 5
+Status/Diagnose: oh-status  —  oh-diagnose
+Mit --voll läuft die Interviewkette (Entwurf, Vorschläge, PII-Prüfung,
+Prüfliste) gleich mit. Rollen erst mit oh-rollen bestätigen.

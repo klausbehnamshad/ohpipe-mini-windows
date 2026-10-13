@@ -1,0 +1,53 @@
+# Entwicklungsumgebung und Geheimnisse (nicht veröffentlichen)
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# Laufzeit, Modelle, Daten (entstehen beim Setup / bei Läufen)
+# Hinweis: app/requirements.lock bleibt versioniert (kein Ausschluss).
+runtime/
+diar2/
+diar2meta/
+input/
+
+# Arbeits- und Ergebnisdateien aus Probe- und Entwicklungsläufen
+*.bak
+*.tmp
+*.log
+
+# Windows-Artefakte
+Thumbs.db
+desktop.ini
+
+# macOS-Artefakte der Entwicklung
+.DS_Store
+
+# Geheimnisse (Token nie ins Repository)
+.hf_token
+*token*.txt
+*token*.json
+.env
+
+# Kleine freigegebene Referenzdaten sind AUSDRÜCKLICH enthalten:
+#   tests/data/sprachclip.wav (+ README) — selbst erzeugter Testclip.
+# Schemas und Testreferenzen (*.schema.json, tests/data/*.README.md,
+# tests/data/*.erwartet.json) gehören zum Code und bleiben versioniert.
+# Aber: keine echten Aufnahmen, Transkripte oder Arbeitsdateien einchecken:
+*.wav
+*.mp3
+*.m4a
+*.aac
+*.flac
+*.ogg
+*.opus
+*.wma
+*.aiff
+*.mp4
+*.mov
+*.mkv
+*.avi
+*.webm
+*.m4v
+*.wmv
+!tests/data/sprachclip.wav

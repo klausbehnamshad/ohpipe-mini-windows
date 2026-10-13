@@ -1,0 +1,44 @@
+{
+  "format": 1,
+  "python": {
+    "version": "3.12.10",
+    "embed": "python-3.12.10-embed-amd64.zip",
+    "embed_sha256": "4acbed6dd1c744b0376e3b1cf57ce906f9dc9e95e68824584c8099a63025a3c3"
+  },
+  "ffmpeg": {
+    "version": "8.1.2",
+    "variante": "gyan-essentials_build (statisch, GPLv3 — siehe docs/LIZENZEN.md)",
+    "url": "https://www.gyan.dev/ffmpeg/builds/packages/ffmpeg-8.1.2-essentials_build.zip",
+    "sha256": "db580001caa24ac104c8cb856cd113a87b0a443f7bdf47d8c12b1d740584a2ec",
+    "groesse_mb_ca": 110
+  },
+  "asr": {
+    "engine": "faster-whisper (device=cpu, compute_type=int8)",
+    "modelle": {
+      "tiny": {"repo": "Systran/faster-whisper-tiny", "revision": "d90ca5fe260221311c53c58e660288d3deb8d356"},
+      "base": {"repo": "Systran/faster-whisper-base", "revision": "ebe41f70d5b6dfa9166e2c581c45c9c0cfc57b66"},
+      "small": {"repo": "Systran/faster-whisper-small", "revision": "536b0662742c02347bc0e980a01041f333bce120"}
+    }
+  },
+  "diar": {
+    "engine": "pyannote-audio lokal (Pipeline.from_pretrained aus lokalem Ordner)",
+    "repo": "pyannote/speaker-diarization-3.1",
+    "revision": "84fd25912480287da0247647c3d2b4853cb3ee5d",
+    "seg_repo": "pyannote/segmentation-3.0",
+    "seg_revision": "e66f3d3b9eb0873085418a7b813d3b369bf160bb"
+  },
+  "asr_engine": "faster-whisper (device=cpu, compute_type=int8)",
+  "diar_engine": "pyannote-audio lokal (Pipeline.from_pretrained aus lokalem Ordner)",
+  "profiles": {
+    "klein": {"asr_model": "tiny", "diar_model": "pyannote/speaker-diarization-3.1", "note": "knapper RAM, schnell, geringere Qualitaet"},
+    "standard": {"asr_model": "base", "diar_model": "pyannote/speaker-diarization-3.1", "note": "CPU-Standardprofil"},
+    "qualitaet": {"asr_model": "small", "diar_model": "pyannote/speaker-diarization-3.1", "note": "optional, mehr RAM/CPU-Zeit"}
+  },
+  "offline_env": {
+    "HF_HUB_OFFLINE": "1",
+    "TRANSFORMERS_OFFLINE": "1",
+    "HF_HUB_DISABLE_TELEMETRY": "1",
+    "PYANNOTE_METRICS_ENABLED": "false",
+    "DO_NOT_TRACK": "1"
+  }
+}

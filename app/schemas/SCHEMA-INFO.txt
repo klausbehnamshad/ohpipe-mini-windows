@@ -1,0 +1,7 @@
+# Fixierte Schemafassung
+Datei: imm-core-1.1.0-core.schema.json
+Quelle: ~/Projects/diar2meta-imm-core-1.1/schema/core.schema.json (diar2meta 0.1.0)
+$id: https://doi.org/10.5281/zenodo.20507329/schema/core.schema.json
+Draft: draft-07. Stand: IMM-Core 1.1.0 (Zenodo 23190815, 06.10.2026).
+Hinweis: Neuere Fassung 1.2.0 existiert (Zenodo 23295846); das Handbuch nennt
+1.1.0, daher ist 1.1.0 fixiert. Offline-Validierung laedt keine entfernten Refs.
