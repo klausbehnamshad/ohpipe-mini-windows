@@ -12,8 +12,7 @@ authors:
     family-names: Behnam Shad
     orcid: "https://orcid.org/0000-0002-3601-9024"
 license: Apache-2.0
-version: 0.3.2
-date-released: "2026-10-13"
+version: 0.3.3
 keywords:
   - oral history
   - speaker diarization

@@ -2,7 +2,7 @@
 
 ohpipe-mini-windows unterstützt die Vorbereitung von Interviewmaterial für Forschung und Erschließung. Aus einer Audio- oder Videoaufnahme entsteht auf dem eigenen Windows-Rechner ein Transkriptentwurf mit Zeitmarken und Sprecherkennungen. Eine Hörliste hilft, unsichere Stellen in der Aufnahme zu prüfen. Nach der einmaligen Einrichtung beginnt die Verarbeitung mit einem Befehl im Terminal.
 
-> **Stand 0.3.2:** Entwicklungsstand mit echter lokaler Verarbeitung (auf einem Mac-Entwicklungsrechner mit den festgelegten Modellen geprüft, siehe unten). Die Abnahme auf einem frischen Windows-11-Rechner steht aus — bis dahin gilt jede Installation als Vorabversion. Es gibt noch keinen öffentlichen Download. Die Interview-Erweiterung (Titel, Zusammenfassungen, L1) arbeitet regelbasiert; ein lokales Sprachmodell dafür steht aus.
+> **Stand 0.3.3:** Quellcode-Vorabversion auf GitHub. Die Abnahme unter Windows 11 mit einem Standardbenutzerkonto und ein öffentliches Installer-Paket stehen aus. Die Interview-Erweiterung (Titel, Zusammenfassungen, L1) arbeitet regelbasiert. Ein lokales Sprachmodell dafür steht aus.
 
 Fachbegriffe in Kürze: *Diarisierung* heißt hier die Zuordnung von Sprachabschnitten zu unterschiedlichen Stimmen (`SPK_01`, `SPK_02`, …). *Alignment* ist die zeitliche Zuordnung der erkannten Wörter. *L1-Codierung* ist eine erste beschreibende Zuordnung von Inhalten (siehe Erweiterung unten).
 
@@ -12,15 +12,17 @@ Für Interviewvorbereitung, Oral History, Erschließung und anschließende quali
 
 ## 2. Wie weit ist die Version?
 
-Version 0.3.2 (Oktober 2026). Echte lokale Transkription und Sprechertrennung wurden auf einem Mac-Entwicklungsrechner mit den festgelegten Modellrevisionen an einem selbst erzeugten 33-Sekunden-Testclip (zwei synthetische Stimmen) geprüft: 9 Segmente auf Deutsch, beide Stimmen korrekt getrennt. Es gibt 39 automatische Programmlogik-Prüfungen. **Nicht gemessen:** Windows-Installation, Erkennungsqualität an echten Interviews (Wort- und Sprecherfehlerrate), lange Aufnahmen, Offline-Lauf mit gesperrtem Netz, Sprachen außer Deutsch. Keine Angabe in diesem Dokument verspricht mehr.
+Auf Windows Server 2025 x64 liefen Embed-Paketinstallation, FFmpeg- und FFprobe-Prüfung, 39 synthetische Programmlogiktests und Paketstrukturprüfung erfolgreich. Die Windows-11-Abnahme mit Standardbenutzerkonto, Modellläufe unter Windows und ein Offline-Test mit gesperrtem Netz stehen aus. [GitHub-Actions-Lauf](https://github.com/klausbehnamshad/ohpipe-mini-windows/actions/runs/44734000993)
+
+Im Entwicklungsstand 0.3.2 (Oktober 2026) wurden echte lokale Transkription und Sprechertrennung auf einem Mac-Entwicklungsrechner mit den festgelegten Modellrevisionen an einem selbst erzeugten 33-Sekunden-Testclip (zwei synthetische Stimmen) geprüft: 9 Segmente auf Deutsch, beide Stimmen korrekt getrennt. Erkennungsqualität an echten Interviews (Wort- und Sprecherfehlerrate), lange Aufnahmen und Sprachen außer Deutsch sind offen.
 
 ## 3. Was brauche ich?
 
-Einen Windows-11-Rechner (x64, CPU genügt), etwa 12 GB freien Speicher (einmalig ca. 3–4 GB für Laufzeit, Programmpakete, Decoder und Modelle) und einmalig Internet für die Einrichtung. Für die Sprechertrennung ist vorab eine kostenlose Freigabe auf der Modellseite nötig (Anleitung zeigt das Setup an); danach arbeitet alles offline. Keine Programmierkenntnisse, kein manuell gepflegtes Python, keine Admin-Rechte.
+Einen Windows-11-Rechner (x64, CPU genügt), etwa 12 GB freien Speicher (einmalig ca. 3–4 GB für Laufzeit, Programmpakete, Decoder und Modelle) und einmalig Internet für die Einrichtung. Für die Sprechertrennung ist vorab eine kostenlose Freigabe auf der Modellseite nötig (Anleitung zeigt das Setup an). Danach ist die Verarbeitung für den lokalen Offline-Betrieb vorgesehen. Keine Programmierkenntnisse, kein manuell gepflegtes Python. Die Einrichtung ist für ein Standardbenutzerkonto vorgesehen.
 
 ## 4. Wie beginne ich?
 
-Das fertige Paket kommt vom Projektbetreuer (per Datei, z. B. USB-Stick); ein öffentlicher Download existiert noch nicht. Danach:
+Ein öffentliches Installer-Paket steht aus. Ein vom Projektbetreuer bereitgestelltes Paket richtest du so ein:
 
 ```powershell
 # 1. Paket entpacken, z. B. nach C:\ohpipe-mini-windows
