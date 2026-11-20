@@ -1,24 +1,66 @@
 name: Windows-Prüfung (Programmlogik, ohne Modelle)
 
-# Allgemeine CI auf Windows: ausführbare Programmlogik, Adaptertests,
-# Paketprüfung. KEINE vollständige Abnahme auf Windows 11 Home 24H2 und
-# kein Ersatz für reale Modelltests (siehe Auftragsdocs/TESTBERICHT.md).
+# Windows Server 2025 x64: Programmlogik, Paketstruktur und Embed-Installation.
+# Die Prüfung für Windows 11 Home 24H2 und echte Modellläufe erfolgt separat.
 on:
   push:
   pull_request:
 
 jobs:
   logik:
-    runs-on: windows-latest
+    runs-on: windows-2025
+    env:
+      HF_HUB_OFFLINE: "1"
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
-      - name: Testvoraussetzungen einrichten (Hash-Lock, wie im Setup)
+          python-version: "3.12.10"
+          architecture: x64
+      - name: Frische Python-Umgebung einrichten
+        shell: pwsh
+        run: |
+          $venv = Join-Path $env:RUNNER_TEMP "ohpipe-ci"
+          python -m venv $venv
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          Join-Path $venv "Scripts" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+      - name: Python, pip und Architektur prüfen
+        shell: pwsh
+        run: |
+          python -c "import site, sys, sysconfig; print(sys.version); print(sysconfig.get_platform()); assert sys.version_info[:3] == (3, 12, 10); assert sysconfig.get_platform() == 'win-amd64'; assert sys.prefix != sys.base_prefix and site.ENABLE_USER_SITE is False"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          python -m pip --version
+      - name: Testvoraussetzungen einrichten (Hash-Lock wie im Setup)
         run: python -m pip install --require-hashes -r app/requirements.lock
-      - name: Python-Prüfungen (ohne Modelle, ohne Netz)
+      - name: Installierte Abhängigkeiten prüfen
+        run: python -m pip check
+      - name: Imports prüfen
+        run: python -c "import faster_whisper, pyannote.audio, torch; print('Imports ok:', torch.__version__)"
+      - name: FFmpeg und FFprobe aus dem Paket-Setup prüfen
+        shell: pwsh
+        run: |
+          $root = $env:GITHUB_WORKSPACE
+          . "$root\scripts\common.ps1"
+          $cfg = Get-ModelsConfig -Root $root
+          Install-FFmpeg -Root $root -Cfg $cfg
+          $expected = [regex]::Escape($cfg.ffmpeg.version)
+          foreach ($tool in @("ffmpeg", "ffprobe")) {
+            $exe = Join-Path $root "runtime\ffmpeg\bin\$tool.exe"
+            $output = & $exe -version
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+            $version = $output | Select-Object -First 1
+            if ($version -notmatch "^$tool version $expected(?:\W|$)") {
+              throw "Unerwartete Version: $version"
+            }
+            Write-Host $version
+          }
+      - name: Synthetische Programmlogik prüfen
         run: python -m pytest tests/ -q
+
+  paketstruktur:
+    runs-on: windows-2025
+    steps:
+      - uses: actions/checkout@v4
       - name: Paketstruktur prüfen
         shell: pwsh
         run: |
@@ -62,3 +104,48 @@ jobs:
             }
           }
           Write-Host ".cmd ok."
+
+  paketinstallation:
+    runs-on: windows-2025
+    env:
+      HF_HUB_OFFLINE: "1"
+    defaults:
+      run:
+        shell: powershell
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12.10"
+          architecture: x64
+      - name: Paket bauen, SHA-256 prüfen und entpacken
+        run: |
+          $version = (Get-Content -LiteralPath "$env:GITHUB_WORKSPACE\VERSION" -Raw).Trim()
+          $packageName = "ohpipe-mini-windows-$version"
+          $artifacts = Join-Path $env:RUNNER_TEMP "ohpipe-artifacts"
+          python "$env:GITHUB_WORKSPACE\scripts\build_paket.py" --ablage $artifacts
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          $archive = Join-Path $artifacts "$packageName.zip"
+          $checksum, $archiveName = (Get-Content -LiteralPath "$archive.sha256" -Raw).Trim() -split "\s+", 2
+          $actual = (Get-FileHash -LiteralPath $archive -Algorithm SHA256).Hash
+          if ($checksum -ne $actual -or $archiveName -cne "$packageName.zip") {
+            throw "SHA-256-Datei stimmt nicht mit dem Paket überein."
+          }
+          Write-Host "Paket SHA-256: $actual"
+          $destination = Join-Path $env:RUNNER_TEMP "ohpipe-extracted"
+          Expand-Archive -LiteralPath $archive -DestinationPath $destination
+          "OHPIPE_CI_PACKAGE=$(Join-Path $destination $packageName)" |
+            Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+      - name: Privates Python und gehashte Pakete installieren
+        run: |
+          $root = $env:OHPIPE_CI_PACKAGE
+          . "$root\scripts\common.ps1"
+          $cfg = Get-ModelsConfig -Root $root
+          Install-PythonEmbed -Root $root -Cfg $cfg
+          Install-PythonPakete -Root $root
+          $python = Join-Path $root "runtime\python\python.exe"
+          & $python -c "import sys, sysconfig; print(sys.version); print(sysconfig.get_platform()); assert sys.version_info[:3] == (3, 12, 10); assert sysconfig.get_platform() == 'win-amd64'; assert sys.flags.isolated"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          & $python -m pip --version
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          & $python -m pip check
