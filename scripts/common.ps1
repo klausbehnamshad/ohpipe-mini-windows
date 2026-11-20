@@ -69,8 +69,8 @@ function Install-PythonEmbed([string]$Root, $Cfg) {
   $exe = Join-Path $ziel "python.exe"
   if ((Test-Path $exe) -and (Test-Path (Join-Path $ziel "Lib\site-packages\pip"))) {
     $v = & $exe -c "import sys; print('.'.join(map(str,sys.version_info[:3])))" 2>$null
-    if ($v -eq $Cfg.python.version) { Write-Host "Privates Python $($Cfg.python.version) vorhanden — uebersprungen."; return }
-    Write-Host "Privates Python hat Version $v (erwartet $($Cfg.python.version)) — neu eingerichtet."
+    if ($v -eq $Cfg.python.version) { Write-Host "Privates Python $($Cfg.python.version) vorhanden - uebersprungen."; return }
+    Write-Host "Privates Python hat Version $v (erwartet $($Cfg.python.version)) - neu eingerichtet."
   }
   $url = "https://www.python.org/ftp/python/$($Cfg.python.version)/$($Cfg.python.embed)"
   $zip = Join-Path ([IO.Path]::GetTempPath()) $Cfg.python.embed
@@ -128,10 +128,10 @@ function Install-FFmpeg([string]$Root, $Cfg) {
   if ((Test-Path $exe) -and (Test-Path $probe)) {
     $v = & $exe -version 2>$null | Select-Object -First 1
     if ($v -match [regex]::Escape($Cfg.ffmpeg.version)) {
-      Write-Host "FFmpeg $($Cfg.ffmpeg.version) vorhanden — uebersprungen."
+      Write-Host "FFmpeg $($Cfg.ffmpeg.version) vorhanden - uebersprungen."
       return
     }
-    Write-Host "FFmpeg-Version weicht ab ($v) — neu eingerichtet."
+    Write-Host "FFmpeg-Version weicht ab ($v) - neu eingerichtet."
   }
   Write-Host ("Decoder: $($Cfg.ffmpeg.variante). Lizenzhinweis: statischer Build, " +
     "enthaelt GPLv3-Komponenten (nur ffmpeg.exe/ffprobe.exe genutzt, siehe docs/LIZENZEN.md).")
