@@ -1,5 +1,14 @@
 # Changelog (ohpipe-mini-windows)
 
+## Unveröffentlicht
+
+- Windows-x64-Zielauflösung für CPython 3.12 ergänzt die fünf fehlenden
+  transitiven Pins. Der Hash-Lock umfasst 102 Pakete. Details zur Auflösung
+  und zu den Paketlizenzen stehen in `docs/ENTWICKLUNG.md` und
+  `docs/LIZENZEN.md`.
+- Das Setup bezieht FFmpeg 8.1.2 Essentials aus dem versionierten
+  GyanD-Release auf GitHub. Der Download verwendet die bisherige SHA-256.
+
 ## 0.3.2 (2026-10-13, Entwicklungsstand — keine Windows-Abnahme)
 
 - Doppelte Rollen in `--setzt` werden abgewiesen (zuvor still

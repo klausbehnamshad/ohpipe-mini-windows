@@ -17,8 +17,8 @@ ergeben TXT/SRT/JSON/RTTM/Hoerliste/run.json. Mit `--voll` laeuft danach
   unveraendert; Herkunft `app/diar2_HERKUNFT.md`). Hier nicht umschreiben.
 - `app/ohext.py`: Metadatenentwurf, Vorschlaege, PII-Pruefung, L1, Berichte.
 - `app/models.json`: Python-, FFmpeg- und Modellrevisionen (fest).
-- `app/requirements.lock`: 97 hash-gepruefte Wheels (win_amd64, CPython
-  3.12, PyTorch-CPU-Index zuerst). Direkt fixiert zusaetzlich:
+- `app/requirements.lock`: 102 Paket-Pins mit SHA-256 (win_amd64, CPython
+  3.12, CPU-Wheels für Torch und Torchaudio). Direkt fixiert zusaetzlich:
   torchaudio==2.3.1 (passend zu torch), pyannote-metrics==3.2.1 (sonst
   numpy-Konflikt), av==15.1.0 (av>=19 bricht faster-whisper 1.1.0),
   huggingface-hub==0.34.4 (hub>=1.0 bricht pyannote 3.3.2),
@@ -31,6 +31,16 @@ ergeben TXT/SRT/JSON/RTTM/Hoerliste/run.json. Mit `--voll` laeuft danach
 - `bin/`: `.cmd`- und `.ps1`-Starter auf das private Python.
 - `tests/`: 39 pytest-Pruefungen (Logik, Adapter, Merge-Regression,
   Mock-Ablauf) + `selbsttest_echt.py` (echter Clip) + `tests/data/`.
+
+## Windows-Zielauflösung
+
+Für die Ergänzung vom 20. November 2026 diente die Versionsliste der bisherigen
+97 Lock-Einträge als Eingabe, mit `+cpu` bei Torch und Torchaudio. `uv 0.13.7`
+löste für `x86_64-pc-windows-msvc` und Python `3.12.10` auf. Verwendet wurden
+der PyTorch-CPU-Index, PyPI, die Indexstrategie `unsafe-best-match` und
+`vendor/wheels` als `--find-links`-Quelle. Die fünf zusätzlichen Ziel-Wheels
+wurden nach SHA-256-Prüfung in den bestehenden Lock übernommen. Ein
+Hash-Lock-Dry-Run mit pip 26.2.2 und Windows-Zielmarkern bestätigte 102 Pakete.
 
 ## Build und Release
 
